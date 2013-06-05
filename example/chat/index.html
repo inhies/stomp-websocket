@@ -105,14 +105,15 @@
           };
           
           // the client is notified when it is connected to the server.
-          client.connect(login, passcode, function(frame) {
+          client.connect(function(frame) {
             client.debug("connected to Stomp");
             $('#connect').fadeOut({ duration: 'fast' });
             $('#connected').fadeIn();
             client.subscribe(destination, function(message) {
               $("#messages").append("<p>" + message.body + "</p>\n");
             });
-          });
+          }, {login: login, passcode: passcode}
+          );
           return false;
         });
   

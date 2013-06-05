@@ -5,7 +5,7 @@ test("Send and receive a message", function() {
   
   var client = Stomp.client(TEST.url);
   client.debug = TEST.debug;
-  client.connect(TEST.login, TEST.password,
+  client.connect(
     function() {
       client.subscribe(TEST.destination, function(message)
       {
@@ -15,7 +15,7 @@ test("Send and receive a message", function() {
       });
       
       client.send(TEST.destination, {}, body);
-    });
+    }, TEST.connectHeaders);
     stop(TEST.timeout);
 });
 
@@ -24,7 +24,7 @@ test("Send and receive a message with a JSON body", function() {
   var client = Stomp.client(TEST.url);
   var payload = {text: "hello", bool: true, value: Math.random()};
   
-  client.connect(TEST.login, TEST.password,
+  client.connect(
     function() {
       client.subscribe(TEST.destination, function(message)
       {
@@ -37,6 +37,6 @@ test("Send and receive a message with a JSON body", function() {
       });
       
       client.send(TEST.destination, {}, JSON.stringify(payload));
-    });
+    }, TEST.connectHeaders);
     stop(TEST.timeout);
 });

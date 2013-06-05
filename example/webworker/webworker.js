@@ -12,7 +12,7 @@ onmessage = function (event) {
   var client = Stomp.client(url);
   
   // connect to the server
-  var subID = client.connect(login, passcode, function(frame) {
+  var subID = client.connect(function(frame) {
     // upon connection, subscribe to the destination
     client.subscribe(destination, function(message) {
       // when a message is received, post it to the current WebWorker
@@ -24,5 +24,5 @@ onmessage = function (event) {
     });
     // send the text to the destination
     client.send(destination, {}, text);
-  });
+  }, {login: login, passcode: passcode});
 };

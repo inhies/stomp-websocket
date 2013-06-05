@@ -14,14 +14,14 @@ module("Stomp Subscription", {
 test("Should receive messages sent to destination after subscribing", 1, function() {
   var msg = 'Is anybody out there?';
 
-  client.connect(TEST.login, TEST.password, function() {
+  client.connect(function() {
     client.subscribe(TEST.destination, function(frame) {
       start();
       equals(frame.body, msg);
     });
 
     client.send(TEST.destination, {}, msg);
-  });
+  }, TEST.connectHeaders);
 
   stop(TEST.timeout);
 });
@@ -30,7 +30,7 @@ test("Should no longer receive messages after unsubscribing to destination", 1, 
   var msg1 = 'Calling all cars!',
       subId = null;
 
-  client.connect(TEST.login, TEST.password, function() {
+  client.connect(function() {
     subId = client.subscribe(TEST.destination, function(frame) {
       start();
       ok(false, 'Should not have received message!');
@@ -43,7 +43,7 @@ test("Should no longer receive messages after unsubscribing to destination", 1, 
 
     client.unsubscribe(subId);
     client.send(TEST.destination, {}, msg1);
-  });
+  }, TEST.connectHeaders);
 
   stop(TEST.timeout);
 });

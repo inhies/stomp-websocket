@@ -6,37 +6,33 @@ describe "Stomp", ->
     ws = new StompServerMock("ws://mocked/stomp/server")
     client = Stomp.over(ws)
     connected = false
-    client.connect("guest", "guest", ->
+    client.connect ->
       connected = true
-    )
     waitsFor -> connected
     runs -> expect(client.connected).toBe(true)
   
   it "lets you connect to a server and get a callback", ->
     client = Stomp.client("ws://mocked/stomp/server")
     connected = false
-    client.connect("guest", "guest", ->
+    client.connect ->
       connected = true
-    )
     waitsFor -> connected
     runs -> expect(client.connected).toBe(true)
   
   it "lets you subscribe to a destination", ->
     client = Stomp.client("ws://mocked/stomp/server")
     id = null
-    client.connect("guest", "guest", ->
+    client.connect ->
       id = client.subscribe("/queue/test")
-    )
     waitsFor -> id
     runs -> expect(Object.keys(client.ws.subscriptions)).toContain(id)
   
   it "lets you publish a message to a destination", ->
     client = Stomp.client("ws://mocked/stomp/server")
     message = null
-    client.connect("guest", "guest", ->
+    client.connect ->
       message = "Hello world!"
       client.send("/queue/test", {}, message)
-    )
     waitsFor -> message
     runs -> expect(client.ws.messages).toContain(message)
   
@@ -44,11 +40,10 @@ describe "Stomp", ->
     client = Stomp.client("ws://mocked/stomp/server")
     unsubscribed = false
     id = null
-    client.connect("guest", "guest", ->
+    client.connect ->
       id = client.subscribe("/queue/test")
       client.unsubscribe(id)
       unsubscribed = true
-    )
     waitsFor -> unsubscribed
     runs -> expect(Object.keys(client.ws.subscriptions)).not.toContain(id)
     
@@ -56,11 +51,10 @@ describe "Stomp", ->
     client = Stomp.client("ws://mocked/stomp/server")
     id = null
     messages = []
-    client.connect("guest", "guest", ->
+    client.connect ->
       id = client.subscribe("/queue/test", (msg) ->
         messages.push(msg)
       )
-    )
     waitsFor -> id
     runs ->
       client.ws.test_send(id, Math.random())
@@ -85,9 +79,8 @@ describe "Stomp", ->
   it "lets you send messages in a transaction", ->
     client = Stomp.client("ws://mocked/stomp/server")
     connected = false
-    client.connect("guest", "guest", ->
+    client.connect ->
       connected = true
-    )
     waitsFor -> connected
     runs ->
       txid = "123"
@@ -102,9 +95,8 @@ describe "Stomp", ->
   it "lets you abort a transaction", ->
     client = Stomp.client("ws://mocked/stomp/server")
     connected = false
-    client.connect("guest", "guest", ->
+    client.connect ->
       connected = true
-    )
     waitsFor -> connected
     runs ->
       txid = "123"

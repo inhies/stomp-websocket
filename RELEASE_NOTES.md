@@ -1,5 +1,24 @@
 # Release Notes
 
+## 2.1 (2013/06/XX)
+
+* refactor the connect arguments to be able to specify addition headers when connecting to a stomp broker.
+
+before, it was not possible to specify e.g. a `client-id` upon connection
+
+    client.connect(login, passcode, connectCallback, errorCallback); // no headers can be set.
+
+now, the `connectCallback`is the 1st argument, the `headers` is the 2nd and the `errorCallback` is the last.
+Both `headers` and `errorCallback` can be omitted:
+
+      headers = {
+        login: login,
+        passcode: passcode,
+        host: host
+      };
+      headers["client-id"] = "myclientid";
+      client.connect(connectCallback, headers);
+
 ## 2.0 (2012/11/29)
 
 ### STOMP 1.1 support

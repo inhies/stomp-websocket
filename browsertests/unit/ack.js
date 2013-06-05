@@ -7,7 +7,7 @@ test("Subscribe using client ack mode, send a message and ack it", function() {
   var client = Stomp.client(TEST.url);
   
   client.debug = TEST.debug;
-  client.connect(TEST.login, TEST.password, function() {
+  client.connect(function() {
     var onmessage = function(message) {
       start();        
       // we should receive the 2nd message outside the transaction
@@ -18,10 +18,10 @@ test("Subscribe using client ack mode, send a message and ack it", function() {
         client.disconnect();
       }
       client.ack(message.headers['message-id'], sub, {'receipt': receipt})
-    }
+    };
     var sub = client.subscribe(TEST.destination, onmessage, {'ack': 'client'});      
     client.send(TEST.destination, {}, body);
-  });
+  }, TEST.connectHeaders);
   stop(TEST.timeout);
 });
 
@@ -32,7 +32,7 @@ test("Subscribe using client ack mode, send a message and nack it", function() {
   var client = Stomp.client(TEST.url);
   
   client.debug = TEST.debug;
-  client.connect(TEST.login, TEST.password, function() {
+  client.connect(function() {
     var onmessage = function(message) {
       start();        
       equals(message.body, body);
@@ -45,6 +45,6 @@ test("Subscribe using client ack mode, send a message and nack it", function() {
     }
     var sub = client.subscribe(TEST.destination, onmessage, {'ack': 'client'});      
     client.send(TEST.destination, {}, body);
-  });
+  }, TEST.connectHeaders);
   stop(TEST.timeout);
 });

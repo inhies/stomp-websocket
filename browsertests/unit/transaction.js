@@ -9,8 +9,7 @@ test("Send a message in a transaction and abort", function() {
   var client = Stomp.client(TEST.url);
   
   client.debug = TEST.debug;
-  client.connect(TEST.login, TEST.password,
-    function() {
+  client.connect(function() {
       client.subscribe(TEST.destination, function(message)
       {
         start();
@@ -23,7 +22,7 @@ test("Send a message in a transaction and abort", function() {
       client.send(TEST.destination, {transaction: txid}, body);
       client.abort(txid);
       client.send(TEST.destination, {}, body2);
-    });
+    }, TEST.connectHeaders);
     stop(TEST.timeout);
 });
 
@@ -35,8 +34,7 @@ test("Send a message in a transaction and commit", function() {
   var client = Stomp.client(TEST.url);
   
   client.debug = TEST.debug;
-  client.connect(TEST.login, TEST.password,
-    function() {
+  client.connect(function() {
       client.subscribe(TEST.destination, function(message)
       {
         start();
@@ -46,6 +44,6 @@ test("Send a message in a transaction and commit", function() {
       client.begin(txid);
       client.send(TEST.destination, {transaction: txid}, body);
       client.commit(txid);
-    });
+    }, TEST.connectHeaders);
     stop(TEST.timeout);
 });
