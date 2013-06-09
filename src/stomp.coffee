@@ -111,6 +111,9 @@ class Client
       # (value in ms)
       incoming: 10000
     }
+    # Send pings 10% faster and allow pongs 10% slower to account for
+    # inaccurate timing in the web browser
+    @heartbeatWindow = 0.10 #10%
     # subscription callbacks indexed by subscriber's ID
     @subscriptions = {}
 
@@ -129,6 +132,7 @@ class Client
 
     unless @heartbeat.outgoing == 0 or serverIncoming == 0
       ttl = Math.max(@heartbeat.outgoing, serverIncoming)
+      ttl = ttl - (ttl * @heartbeatWindow);
       @debug? "send PING every #{ttl}ms"
       @pinger = window?.setInterval(=>
         @ws.send Byte.LF
@@ -137,6 +141,7 @@ class Client
 
     unless @heartbeat.incoming == 0 or serverOutgoing == 0
       ttl = Math.max(@heartbeat.incoming, serverOutgoing)
+      ttl = ttl + (ttl * @heartbeatWindow)
       @debug? "check PONG every #{ttl}ms"
       @ponger = window?.setInterval(=>
         delta = Date.now() - @serverActivity
